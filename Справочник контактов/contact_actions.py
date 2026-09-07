@@ -3,7 +3,13 @@ from bd_manager import *
 def add_contact_action():
     """Добавление нового контакта"""
     name  = input("Введите имя контакта: ").strip()
-    phone = input("Введите телефон: ").strip()
+
+    while True:
+        phone = input("Введите телефон: ").strip()
+        if is_valid_phone(phone):
+            break
+        print("Некорректный номер телефона. Попробуйте снова.")
+
     email = input("Введите email: ").strip()
     address = input("Введите адрес: ").strip()
 
@@ -73,14 +79,36 @@ def list_all_contacts_action():
         print(f"Email: {data['email']}")
         print(f"Адрес: {data['address']}")
 
-# def is_valid_phone(phone: str) -> bool:
-#     """Проверка корректности телефона"""
-#     phone = phone.strip()
-#     if not phone:
-#         return False
-#     if phone.startswith("+"):
-#         return phone[1:].isdigit()
-#     return phone.isdigit()
+def is_valid_phone(phone: str) -> bool:
+    """Проверка корректности телефона"""
+    phone = phone.strip() # Убираем пробелы
+
+    if not phone: # Проверка на пустую строку
+        print("Это поле не должно быть пустым.")
+        return False
+
+    # Проверка на наличие +
+    if phone.startswith("+"):
+        digits = phone[1:]
+
+        # После + должны идти только цифры
+        if not digits.isdigit():
+            return False
+
+        if not (7 <= len(digits) <= 15):
+            return False
+        return True
+
+    # Если строка начинается не с +, то она должна состоять из цифр
+    if not phone.isdigit():
+        return False
+
+    if not (7 <= len(phone) <= 15):
+        return False
+    return True
+
+
+
 
 # def is_valid_email(email):
 #     """Проверка корректности email"""
