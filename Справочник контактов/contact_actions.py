@@ -10,7 +10,11 @@ def add_contact_action():
             break
         print("Некорректный номер телефона. Попробуйте снова.")
 
-    email = input("Введите email: ").strip()
+    while True:
+        email = input("Введите email: ").strip()
+        if is_valid_email(email):
+            break
+        print("Некорректный Email. Попробуйте снова.")
     address = input("Введите адрес: ").strip()
 
     if add_contact(name, phone, email, address):
@@ -108,18 +112,29 @@ def is_valid_phone(phone: str) -> bool:
     return True
 
 
+def is_valid_email(email):
+    """Проверка корректности email"""
+    email = email.strip()
+    if not email:
+        return True
 
+    if "@" not in email:
+        return False
 
-# def is_valid_email(email):
-#     """Проверка корректности email"""
-#     email = email.strip()
-#     if not email:
-#         return True
-#     if "@" not in email:
-#         return False
-#     local, _, domain = email.partition("@")
-#     if "." not in domain:
-#         return False
-#     return True
+    local, _, domain = email.partition("@")
+
+    if not local or not domain:
+        return False
+
+    if "." not in domain:
+        return False
+
+    if " " in email:
+        return False
+
+    forbidden = '()[]{}<>,"\'\\;:'
+    if any(ch in forbidden for ch in email):
+        return False
+    return True
 
 
