@@ -4,13 +4,13 @@ def add_contact_action():
     """Добавление нового контакта"""
     name  = input("Введите имя контакта: ").strip()
 
-    while True:
+    while True: # Проверка корректности ввода
         phone = input("Введите телефон: ").strip()
         if is_valid_phone(phone):
             break
         print("Некорректный номер телефона. Попробуйте снова.")
 
-    while True:
+    while True: # Проверка корректности ввода
         email = input("Введите email: ").strip()
         if is_valid_email(email):
             break

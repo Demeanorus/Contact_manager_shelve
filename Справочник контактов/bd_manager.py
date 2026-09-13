@@ -9,20 +9,46 @@ def open_storage():
 
 def get_all_contacts():
     """Возвращаем все контакты из базы"""
-    with shelve.open(BD_NAME, flag='c') as db:
+    db = None
+    try:
+        db = shelve.open(BD_NAME, flag="c")
         results = {}
         for name in db:
             results[name] = db[name]
         return results
+    except Exception:
+        return {}
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
 
 def get_contact(name):
     """Возвращаем один контакт по имени"""
-    with shelve.open(BD_NAME, flag='c') as db:
-        return db.get(name)
+    if not name:
+        return None
+    db = None
+    try:
+        db = shelve.open(BD_NAME, flag='c')
+        contact = db.get(name)
+        return contact
+    except Exception:
+        return None
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
+
 
 def add_contact(name, phone, email, address):
     """Добавляем новый контакт"""
-    with shelve.open(BD_NAME, flag='c') as db:
+    if not name:
+        return False
+    db = None
+    try:
+        db = shelve.open(BD_NAME, flag='c')
         if name in db:
             return False
         db[name] = {
@@ -31,10 +57,22 @@ def add_contact(name, phone, email, address):
             "address": address
         }
         return True
+    except Exception:
+        return False
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
 
 def update_contact(name, phone, email, address):
     """Обновляет существующий контакт"""
-    with shelve.open(BD_NAME, flag='c') as db:
+    if not name:
+        return False
+    db = None
+    try:
+        db = shelve.open(BD_NAME, flag='c')
+
         if name not in db:
             return False
         db[name] = {
@@ -43,12 +81,29 @@ def update_contact(name, phone, email, address):
             "address": address
         }
         return True
+    except Exception:
+        return False
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
 
 def delete_contact(name):
     """Удаляет контакт по имени."""
-    with shelve.open(BD_NAME, flag='c') as db:
+    if not name:
+        return False
+    db = None
+    try:
+        db = shelve.open(BD_NAME, flag='c')
         if name not in db:
             return False
         del db[name]
         return True
-
+    except Exception:
+        return False
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
