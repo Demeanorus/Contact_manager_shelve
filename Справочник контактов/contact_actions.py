@@ -1,4 +1,4 @@
-from bd_manager import *
+from bd_manager import get_all_contacts, get_contact, add_contact, update_contact, delete_contact
 
 def add_contact_action():
     """Добавление нового контакта"""

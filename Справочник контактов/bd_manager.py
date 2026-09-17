@@ -1,4 +1,13 @@
 import shelve
+import dbm
+import pickle
+import logging
+logging.basicConfig(level=logging.ERROR)
+
+# Обработка ошибок:
+# - dbm.error: ошибки при работе с базой данных (нет доступа, диск занят, файл поврежден)
+# - pickle.UnpicklingError: ошибки при десериализации данных (база повреждена или формат изменился)
+# Логируем ошибки для отладки, возвращаем значения по умолчанию для graceful degradation
 
 BD_NAME = "contacts.db"
 
@@ -15,7 +24,8 @@ def get_all_contacts():
             for name in db:
                 results[name] = db[name]
             return results
-    except Exception:
+    except (dbm.error, pickle.UnpicklingError) as e:
+        logging.error(f"Ошибка в get_all_contacts: {e}")
         return {}
 
 
@@ -27,7 +37,8 @@ def get_contact(name):
         with open_storage() as db:
             contact = db.get(name)
             return contact
-    except Exception:
+    except (dbm.error, pickle.UnpicklingError) as e:
+        logging.error(f"Ошибка в get_contact: {e}")
         return None
 
 
@@ -46,7 +57,8 @@ def add_contact(name, phone, email, address):
                 "address": address
             }
             return True
-    except Exception:
+    except (dbm.error, pickle.UnpicklingError) as e:
+        logging.error(f"Ошибка в add_contact: {e}")
         return False
 
 
@@ -64,7 +76,8 @@ def update_contact(name, phone, email, address):
                 "address": address
             }
             return True
-    except Exception:
+    except (dbm.error, pickle.UnpicklingError) as e:
+        logging.error(f"Ошибка в update_contact: {e}")
         return False
 
 
@@ -78,5 +91,6 @@ def delete_contact(name):
                 return False
             del db[name]
             return True
-    except Exception:
+    except (dbm.error, pickle.UnpicklingError) as e:
+        logging.error(f"Ошибка в delete_contact: {e}")
         return False
